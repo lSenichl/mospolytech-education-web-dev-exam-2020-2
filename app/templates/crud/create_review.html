@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="text-center font-weight-bold">Оставить рецензию</h2>
+
+<div class="card my-3 text-right w-75 m-auto">
+    <h5 class="card-header">Ваша рецензия</h5>
+    <div class="card-body">
+        <form class="w-100" method="POST" action="{{ url_for('crud.create_review', movie_id=movie_id) }}">
+            <div class="form-group">
+                <label for="text-content">Введите текст в формате Markdown</label>
+                <textarea class="form-control" name="text" id="text-content" cols="30" rows="10"></textarea>
+            </div>
+            <input type="hidden" name="user_id" value="{{ current_user.id }}">
+            <input type="hidden" name="movie_id" value="{{ movie_id }}">
+            <div class="form-group">
+                <label for="FormControlSelect1">Оценка фильма</label>
+                <select class="form-control mb-2" id="FormControlSelect1" name="rating">
+                    <option selected value="5">Отлично</option>
+                    <option value="4">Хорошо</option>
+                    <option value="3">Удовлетворительно</option>
+                    <option value="2"> Неудовлетворительно</option>
+                    <option value="1">Плохо</option>
+                    <option value="0">Ужасно</option>
+                </select>
+            </div>
+            <div class="form-group text-right">
+                <input class="btn btn-dark w-100" type="submit" value="Оставить рецензию">
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

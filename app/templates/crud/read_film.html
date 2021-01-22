@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="title-area text-center py-5 d-flex" style="background-image: url({{ movie.poster.url }});">
+    <div class="m-auto">
+        <h1 class="title mb-3 font-weight-bold">{{ movie.name }}</h1>
+        <p class="mb-3 mx-auto">
+            {{ movie.production_year }} |
+            {% for genre in movie.genres %}
+            <span class="badge bg-dark">{{ genre.name }}</span>
+            {% endfor %} | <span>★</span> <span>{{ "%.2f" | format(movie.rating) }}</span>
+        </p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <section class="about mb-5">
+        <h2 class="mb-3 text-center font-weight-bold">О фильме</h2>
+        <p>{{ movie.html | safe }}</p>
+        <p>Страна производства: {{ movie.country }}</p>
+        <p>Продюсер: {{ movie.producer }}</p>
+        <p>Сценарист: {{ movie.screenwriter }}</p>
+        <p>Актёры: {{ movie.actors }}</p>
+        <p>Продолжительность: {{ movie.duration }} минут</p>
+    </section>
+
+
+    <section class="comments mb-5">
+        <h2 class="mb-3 text-center font-weight-bold">Рецензии</h2>
+        {% for review in (ncur|sort(attribute='created_at', reverse = True))[:5] %}
+        <div class="card mt-3">
+            <h5 class="card-header">{{ review.user.full_name }}</h5>
+            <div class="card-body">
+                <p class="card-text">{{ review.html | safe }}</p>
+                <h3><span class="badge bg-secondary">★ {{ review.rating }}</span></h3>
+                <div class="text-muted mt-2">{{ review.created_at }}</div>
+            </div>
+        </div>
+        {% endfor %}
+        {% if current_user.is_authenticated and cur %}
+        <div class="card mt-3 text-end">
+            <h5 class="card-header">Ваша рецензия</h5>
+            <div class="card-body">
+
+                <p class="card-text">{{ cur.html | safe }}</p>
+                <h3><span class="badge bg-secondary">★ {{ cur.rating }}</span></h3>
+                <div class="text-muted mt-2">{{ cur.created_at }}</div>
+            </div>
+        </div>
+        {% else %}
+        {% if current_user.is_authenticated %}
+        <div class="container text-center  my-3 mb-5">
+            <a href="{{ url_for('crud.create_review', movie_id=movie.id ) }}" class="btn btn-dark btn-lg">Написать
+                рецензию</a>
+        </div>
+        {% endif %}
+        {% endif %}
+        <div class="container text-center  my-3 mb-5">
+            <a href="" class="btn btn-dark btn-lg">Смотреть все рецензии</a>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

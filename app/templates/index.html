@@ -1,5 +1,42 @@
 {% extends 'base.html' %}
+{% from 'pagination.html' import render_pagination %}
 
 {% block content %}
+
+<div class="text-center d-flex">
+    <div class="m-auto w-75">
+
+        <h1 class="mb-5 font-weight-bold">Фильмы</h1>
+
+        {% for movie in movies %}
+        <div class="card mb-3 w-100">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{ movie.name }}</h5>
+                <p class="card-text">
+                    {% for genre in movie.genres %}
+                    <span class="badge bg-dark">{{ genre.name }}</span>
+                    {% endfor %}
+                </p>
+                <p class="card-text"><small class="text-muted">{{ movie.production_year }}</small></p>
+                <p class="card-text"><small class="text-muted">{{ movie.reviews|length }}</small></p>
+            </div>
+
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <a href="{{ url_for('crud.read', movie_id=movie.id) }}" type="button" class="btn btn-primary">Просмотр</a>
+                <a href="{{ url_for('crud.update', movie_id=movie.id) }}" type="button" class="btn btn-success">Редактирование</a>
+                <a href="{{ url_for('crud.delete', movie_id=movie.id) }}" type="button" class="btn btn-danger">Удаление</a>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if movies %}
+        <div class="mb-3">
+            {{ render_pagination(pagination, request.endpoint) }}
+        </div>
+        {% endif %}
+        <button type="button" class="btn btn-dark w-100">Добавить фильм</button>
+    </div>
+</div>
 
 {% endblock %}

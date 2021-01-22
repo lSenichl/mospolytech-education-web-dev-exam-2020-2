@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import markdown
 from app import db
 from sqlalchemy.dialects import mysql
+from users_policy import UsersPolicy
 
 
 class Genre(db.Model):
@@ -54,6 +55,10 @@ class Movie(db.Model):
         else:
             return 0
 
+    @property
+    def html(self):
+        return markdown.markdown(self.description)
+
 
 class Poster(db.Model):
     __tablename__ = 'exam_posters'
@@ -68,7 +73,7 @@ class Poster(db.Model):
 
     @property
     def url(self):
-        return url_for('Poster', poster_id=self.id)
+        return url_for('poster', poster_id=self.id)
 
     @property
     def storage_filename(self):
@@ -93,6 +98,10 @@ class Review(db.Model):
 
     def __repr__(self):
         return '<Review %r>' % self.name
+
+    @property
+    def html(self):
+        return markdown.markdown(self.text)
 
 
 class User(db.Model, UserMixin):
@@ -121,6 +130,13 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def can(self, action, record=None):
+        policy = UsersPolicy(record=record)
+        method = getattr(policy, action, None)
+        if method:
+            return method()
+        return False
 
 
 class Role(db.Model):
