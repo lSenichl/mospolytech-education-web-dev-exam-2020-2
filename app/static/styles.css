@@ -10,3 +10,8 @@
 .footer, .navbar {
     height: 75px;
 }
+
+.background-preview {
+    border: 3px dashed grey;
+    flex-grow: 1;
+}

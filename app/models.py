@@ -42,8 +42,9 @@ class Movie(db.Model):
 
     poster_id = db.Column(db.String(36), db.ForeignKey('exam_posters.id'), nullable=False)
 
-    poster = db.relationship('Poster', backref='movies')
-    genres = db.relationship('Genre', secondary=genres, backref=db.backref('movies', lazy='dynamic'))
+    poster = db.relationship('Poster', backref=db.backref('movies', cascade='all, delete'))
+    genres = db.relationship('Genre', secondary=genres, backref=db.backref('movies', lazy='dynamic', cascade='all, delete'))
+    reviews = db.relationship('Review', cascade="all, delete")
 
     def __repr__(self):
         return '<Movie %r>' % self.name
@@ -93,7 +94,7 @@ class Review(db.Model):
     text = db.Column(db.Text(), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=sa.sql.func.now())
 
-    movie = db.relationship('Movie', backref='reviews')
+    
     user = db.relationship('User', backref='reviews')
 
     def __repr__(self):

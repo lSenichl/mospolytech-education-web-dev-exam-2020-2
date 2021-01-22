@@ -19,13 +19,17 @@
                     {% endfor %}
                 </p>
                 <p class="card-text"><small class="text-muted">{{ movie.production_year }}</small></p>
-                <p class="card-text"><small class="text-muted">{{ movie.reviews|length }}</small></p>
+                <p class="card-text"><small class="text-muted">Количество рецензий: {{ movie.reviews|length }}</small></p>
             </div>
 
             <div class="btn-group" role="group" aria-label="Basic example">
                 <a href="{{ url_for('crud.read', movie_id=movie.id) }}" type="button" class="btn btn-primary">Просмотр</a>
-                <a href="{{ url_for('crud.update', movie_id=movie.id) }}" type="button" class="btn btn-success">Редактирование</a>
+                {% if current_user.is_authenticated and (current_user.role.name == 'Администратор' or current_user.role.name == 'Модератор') %}
+                <a href="{{ url_for('crud.update', movie_id=movie.id) }}" type="button" class="btn btn-success" >Редактирование</a>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.role.name == 'Администратор' %}
                 <a href="{{ url_for('crud.delete', movie_id=movie.id) }}" type="button" class="btn btn-danger">Удаление</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -35,7 +39,9 @@
             {{ render_pagination(pagination, request.endpoint) }}
         </div>
         {% endif %}
-        <button type="button" class="btn btn-dark w-100">Добавить фильм</button>
+        {% if current_user.is_authenticated and current_user.role.name == 'Администратор' %}
+        <a href="{{ url_for('crud.create') }}" type="button" class="btn btn-dark w-100">Добавить фильм</a>
+        {% endif %}
     </div>
 </div>
 

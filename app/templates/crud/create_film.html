@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
+{% from 'crud/create_update_form.html' import render_text_form %}
 
 {% block content %}
+
+<h2 class="text-center font-weight-bold">Добавление фильма</h2>
+
+<div class="container-fluid w-75">
+    {{ render_text_form(genres=genres) }}
+</div>
 
 {% endblock %}

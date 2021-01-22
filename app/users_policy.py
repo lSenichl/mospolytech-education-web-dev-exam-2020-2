@@ -19,7 +19,7 @@ class UsersPolicy:
     def update_movie(self):
         return is_admin() or is_moderator()
 
-    def new_movie(self):
+    def create_movie(self):
         return is_admin()
 
     def delete_movie(self):

@@ -2,8 +2,8 @@ import os
 import bleach
 from flask import Blueprint, render_template, redirect, url_for, request, current_app, flash
 from flask_login import login_required, current_user
-#from tools import 
-from models import Movie, Review
+from tools import ImageSaver
+from models import Movie, Review, User, Genre
 from auth import check_rights
 
 from app import db
@@ -50,15 +50,25 @@ def create_review(movie_id):
         db.session.commit()
         flash("Рецензия успешно оставлена", "success")
 
-        return  redirect(url_for('crud.read', movie_id=movie_id))
+        return redirect(url_for('crud.read', movie_id=movie_id))
 
     return render_template('crud/create_review.html', movie_id=movie_id)
+
+@bp.route('/create')
+@login_required
+@check_rights('create_movie')
+def create():
+    genres = Genre.query.all()
+    
+    return render_template('crud/create_film.html', genres=genres)
 
 
 @bp.route('/update/<int:movie_id>')
 @login_required
 @check_rights('update_movie')
 def update(movie_id):
+
+
     return render_template('crud/update_film.html', movie_id=movie_id)
 
 
@@ -66,5 +76,10 @@ def update(movie_id):
 @login_required
 @check_rights('delete_movie')
 def delete(movie_id):
+    movie = Movie.query.get(movie_id)
+
+    db.session.delete(movie)
+    db.session.commit()
+
     flash('Фильм успешно удалён', 'success')
     return redirect(url_for('index'))
