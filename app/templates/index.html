@@ -8,31 +8,38 @@
 
         <h1 class="mb-5 font-weight-bold">Фильмы</h1>
 
-        {% for movie in movies %}
-        <div class="card mb-3 w-100">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">{{ movie.name }}</h5>
-                <p class="card-text">
-                    {% for genre in movie.genres %}
-                    <span class="badge bg-dark">{{ genre.name }}</span>
-                    {% endfor %}
-                </p>
-                <p class="card-text"><small class="text-muted">{{ movie.production_year }}</small></p>
-                <p class="card-text"><small class="text-muted">Количество рецензий: {{ movie.reviews|length }}</small></p>
-            </div>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for movie in movies %}
+            <div class="card mb-3 mx-auto">
+                <img src="{{ movie.poster.url }}" class="card-img-top pt-2 img-thumbinal" alt="">
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.name }}</h5>
+                    <p class="card-text">
+                        {% for genre in movie.genres %}
+                        <span class="badge bg-dark">{{ genre.name }}</span>
+                        {% endfor %}
+                    </p>
+                    <p class="card-text"><small class="text-muted">{{ movie.production_year }} год</small></p>
+                    <p class="card-text"><small class="text-muted">Количество рецензий: {{ movie.reviews|length
+                            }}</small></p>
+                </div>
 
-            <div class="btn-group" role="group" aria-label="Basic example">
-                <a href="{{ url_for('crud.read', movie_id=movie.id) }}" type="button" class="btn btn-primary">Просмотр</a>
-                {% if current_user.is_authenticated and (current_user.role.name == 'Администратор' or current_user.role.name == 'Модератор') %}
-                <a href="{{ url_for('crud.update', movie_id=movie.id) }}" type="button" class="btn btn-success" >Редактирование</a>
-                {% endif %}
-                {% if current_user.is_authenticated and current_user.role.name == 'Администратор' %}
-                <a href="{{ url_for('crud.delete', movie_id=movie.id) }}" type="button" class="btn btn-danger">Удаление</a>
-                {% endif %}
+                <div class="btn-group w-100 mb-3" role="group" aria-label="Basic example">
+                    <a href="{{ url_for('crud.read', movie_id=movie.id) }}" type="button"
+                        class="btn btn-primary">Просмотр</a>
+                    {% if current_user.is_authenticated and (current_user.role.name == 'Администратор' or
+                    current_user.role.name == 'Модератор') %}
+                    <a href="{{ url_for('crud.update', movie_id=movie.id) }}" type="button"
+                        class="btn btn-success">Редактирование</a>
+                    {% endif %}
+                    {% if current_user.is_authenticated and current_user.role.name == 'Администратор' %}
+                    <a href="{{ url_for('crud.delete', movie_id=movie.id) }}" type="button"
+                        class="btn btn-danger">Удаление</a>
+                    {% endif %}
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
 
         {% if movies %}
         <div class="mb-3">
@@ -40,7 +47,7 @@
         </div>
         {% endif %}
         {% if current_user.is_authenticated and current_user.role.name == 'Администратор' %}
-        <a href="{{ url_for('crud.create') }}" type="button" class="btn btn-dark w-100">Добавить фильм</a>
+        <a href="{{ url_for('crud.create') }}" type="button" class="btn btn-dark w-100 mb-5">Добавить фильм</a>
         {% endif %}
     </div>
 </div>

@@ -49,6 +49,10 @@
             </div>
         </div>
         {% else %}
+        {% if ncur or cur %}
+        {% else %}
+        <p class="text-center">Рецензии отсутствуют</p>
+        {% endif %}
         {% if current_user.is_authenticated %}
         <div class="container text-center  my-3 mb-5">
             <a href="{{ url_for('crud.create_review', movie_id=movie.id ) }}" class="btn btn-dark btn-lg">Написать

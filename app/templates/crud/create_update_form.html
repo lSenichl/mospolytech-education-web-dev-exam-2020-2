@@ -31,10 +31,10 @@
                 <input class="form-control" type="text" name="duration" id="duration">
             </div>
             <div class="form-group">
-                <label for="genres">Жанры</label>
+                <label for="genre_ids">Жанры</label>
                 <select class="form-control" multiple id="genre_ids" name="genre_ids">
                     {% for genre in genres %}
-                    <option value="{{ genre.id }}">{{ genre.name }}</option>
+                    <option value="{{ genre }}">{{ genre.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -47,7 +47,7 @@
             <div
                 class="form-group background-preview mt-4 p-3 rounded d-flex align-items-center justify-content-center">
                 <img src="" class="img-fluid d-none" alt="">
-                <label for="background_img" class="btn btn-primary">Выбрать изображение</label>
+                <label for="background_img" class="btn btn-dark">Выбрать изображение</label>
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="form-group text-center">
-        <input type="submit" class="btn btn-primary" value="Сохранить">
+        <input type="submit" class="btn btn-dark my-3 w-100" value="Сохранить">
     </div>
 </form>
 {% endmacro %}

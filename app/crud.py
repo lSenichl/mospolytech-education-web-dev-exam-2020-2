@@ -78,11 +78,18 @@ def new():
         img = img_saver.save()
 
     description = bleach.clean(request.form.get('description'))
-    genres = request.args.getlist('genre_ids')
+    genres = request.form.getlist('genre_ids')
+    print(genres)
 
-    movie = Movie(**params(), poster_id=img.id, description=description, genres=genres)
+    
+
+    movie = Movie(**params(), poster_id=img.id, description=description)
     db.session.add(movie)
     db.session.commit()
+
+    for genre_id in genres:
+        genre = Genre.query.filter(Genre.id == genre_id).first()
+        movie.genres.append(genre)
 
     if img:
         img_saver.bind_to_object(movie)
