@@ -52,13 +52,10 @@ function imageUploadFunction(file, onSuccess, onError) {
     xhr.send(formData);
 }
 
-
-
-
 const TOOLBAR_ITEMS = [
     "bold", "italic", "heading", "|", 
     "quote", "ordered-list", "unordered-list", "|",
-    "link", "upload-image", "|",  
+    "link", "|",  
     "preview", "side-by-side", "fullscreen", "|",
     "guide"
 ]
@@ -75,9 +72,6 @@ window.onload = function() {
         let easyMDE = new EasyMDE({
             element: document.getElementById('text-content'),
             toolbar: TOOLBAR_ITEMS,
-            uploadImage: true,
-            imageUploadEndpoint: '/api/images/upload',
-            imageUploadFunction: imageUploadFunction
         });
     }
 }

@@ -10,9 +10,13 @@ from app import db
 
 bp = Blueprint('crud', __name__, url_prefix='/crud')
 
+PERMITTED_PARAMS = ['name', 'production_year', 'country', 'producer', 'screenwriter', 'actors', 'duration']
 PERMITTED_REVIEW_PARAMS = ['user_id', 'movie_id', 'text', 'rating']
 
 PER_PAGE = 5
+
+def params():
+    return { p: request.form.get(p) for p in PERMITTED_PARAMS }
 
 def review_params():
     return { p: request.form.get(p) for p in PERMITTED_REVIEW_PARAMS }
@@ -61,6 +65,31 @@ def create():
     genres = Genre.query.all()
     
     return render_template('crud/create_film.html', genres=genres)
+
+
+@bp.route('/new', methods=['POST'])
+@login_required
+@check_rights('create_movie')
+def new():
+    f = request.files.get('background_img') 
+    img = None
+    if f and f.filename:
+        img_saver = ImageSaver(f)
+        img = img_saver.save()
+
+    description = bleach.clean(request.form.get('description'))
+    genres = request.args.getlist('genre_ids')
+
+    movie = Movie(**params(), poster_id=img.id, description=description, genres=genres)
+    db.session.add(movie)
+    db.session.commit()
+
+    if img:
+        img_saver.bind_to_object(movie)
+
+    flash(f'Фильм {movie.name} был успешно добавлен!', 'success')
+
+    return redirect(url_for('index'))
 
 
 @bp.route('/update/<int:movie_id>')
