@@ -91,6 +91,7 @@ class Review(db.Model):
 
     movie_id = db.Column(db.Integer, db.ForeignKey('exam_movies.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('exam_users.id'), nullable=False)
+    is_moderated = db.Column(db.Boolean, unique=False, default=True)
 
     rating = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text(), nullable=False)

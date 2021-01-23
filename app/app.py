@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from flask_migrate import Migrate
 
-PER_PAGE = 5
+PER_PAGE = 4
 
 app = Flask(__name__)
 application = app

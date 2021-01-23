@@ -1,16 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<div class="title-area text-center py-5 d-flex" style="background-image: url({{ movie.poster.url }});">
-    <div class="m-auto">
-        <h1 class="title mb-3 font-weight-bold">{{ movie.name }}</h1>
-        <p class="mb-3 mx-auto">
-            {{ movie.production_year }} |
-            {% for genre in movie.genres %}
-            <span class="badge bg-dark">{{ genre.name }}</span>
-            {% endfor %} | <span>★</span> <span>{{ "%.2f" | format(movie.rating) }}</span>
-        </p>
+<div class="card mb-3 w-75 mx-auto">
+    <div class="row no-gutters">
+        <div class="col-md-4">
+            <img class="img-fluid" src="{{ movie.poster.url }}" alt="...">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body my-auto">
+                <h5 class="card-title pb-4 h1 text-center display-1">{{ movie.name }}</h5>
+                <p class="card-text">
+                <p class="mb-5 mx-auto h2 text-center">
+                    {{ movie.production_year }} |
+                    {% for genre in movie.genres %}
+                    <span class="badge badge-dark">{{ genre.name }}</span>
+                    {% endfor %} | <span>★</span> <span>{{ "%.2f" | format(movie.rating) }}</span>
+                </p>
+                <section class="about mb-5 h4 mt-5 w-50 mx-auto text-center">
+                    <p>Страна производства: {{ movie.country }}</p>
+                    <p>Продюсер: {{ movie.producer }}</p>
+                    <p>Сценарист: {{ movie.screenwriter }}</p>
+                    <p>Актёры: {{ movie.actors }}</p>
+                    <p>Продолжительность: {{ movie.duration }} минут</p>
+                </section>
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -18,11 +33,6 @@
     <section class="about mb-5">
         <h2 class="mb-3 text-center font-weight-bold">О фильме</h2>
         <p>{{ movie.html | safe }}</p>
-        <p>Страна производства: {{ movie.country }}</p>
-        <p>Продюсер: {{ movie.producer }}</p>
-        <p>Сценарист: {{ movie.screenwriter }}</p>
-        <p>Актёры: {{ movie.actors }}</p>
-        <p>Продолжительность: {{ movie.duration }} минут</p>
     </section>
 
 

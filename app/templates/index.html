@@ -8,34 +8,40 @@
 
         <h1 class="mb-5 font-weight-bold">Фильмы</h1>
 
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="row row-cols-1 row-cols-md-4">
             {% for movie in movies %}
-            <div class="card mb-3 mx-auto">
-                <img src="{{ movie.poster.url }}" class="card-img-top pt-2 img-thumbinal" alt="">
-                <div class="card-body">
-                    <h5 class="card-title">{{ movie.name }}</h5>
-                    <p class="card-text">
-                        {% for genre in movie.genres %}
-                        <span class="badge bg-dark">{{ genre.name }}</span>
-                        {% endfor %}
-                    </p>
-                    <p class="card-text"><small class="text-muted">{{ movie.production_year }} год</small></p>
-                    <p class="card-text"><small class="text-muted">Количество рецензий: {{ movie.reviews|length
-                            }}</small></p>
-                </div>
-
-                <div class="btn-group w-100 mb-3" role="group" aria-label="Basic example">
-                    <a href="{{ url_for('crud.read', movie_id=movie.id) }}" type="button"
-                        class="btn btn-primary">Просмотр</a>
-                    {% if current_user.is_authenticated and (current_user.role.name == 'Администратор' or
-                    current_user.role.name == 'Модератор') %}
-                    <a href="{{ url_for('crud.update', movie_id=movie.id) }}" type="button"
-                        class="btn btn-success">Обновить</a>
-                    {% endif %}
-                    {% if current_user.is_authenticated and current_user.role.name == 'Администратор' %}
-                    <a href="{{ url_for('crud.delete', movie_id=movie.id) }}" type="button"
-                        class="btn btn-danger">Удалить</a>
-                    {% endif %}
+            <div class="col mb-4">
+                <div class="card h-100">
+                    <img src="{{ movie.poster.url }}" class="card-img-top" alt="...">
+                    <div class=" d-flex align-items-end h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ movie.name }}</h5>
+                            <p class="card-text">
+                                {% for genre in movie.genres %}
+                                <span class="badge badge-dark p-2">{{ genre.name }}</span>
+                                {% endfor %}
+                            </p>
+                            <p class="card-text"><small class="text-muted">{{ movie.production_year }} год</small></p>
+                            <p class="card-text"><small class="text-muted">Количество рецензий: {{movie.reviews|selectattr('is_moderated')|list|length}}</small></p>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="btn-group w-100" role="group" aria-label="Basic example">
+                            <a href="{{ url_for('crud.read', movie_id=movie.id) }}" type="button"
+                                class="btn btn-dark">Просмотр</a>
+                            {% if current_user.is_authenticated and (current_user.role.name == 'Администратор' or
+                            current_user.role.name == 'Модератор') %}
+                            <a href="{{ url_for('crud.update', movie_id=movie.id) }}" type="button"
+                                class="btn btn-success">Обновить</a>
+                            {% endif %}
+                            {% if current_user.is_authenticated and current_user.role.name == 'Администратор' %}
+                            <a type="button" class="btn btn-danger" data-toggle="modal"
+                                data-target="#delete-movie-modal" data-movie="{{ movie.name }}"
+                                data-url="{{ url_for('crud.delete', movie_id=movie.id) }}">Удалить</a>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -51,5 +57,26 @@
         {% endif %}
     </div>
 </div>
-
+<div class="modal" tabindex="-1" role="dialog" id="delete-movie-modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Удаление фильма</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите удалить фильм <span id="movie-name"></span> ?</p>
+                <form action="" method="POST" class="d-none">
+                    <input type="submit" name="delete-btn" id="delete-btn">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <label for="delete-btn" class="btn btn-danger mb-1">Да</label>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

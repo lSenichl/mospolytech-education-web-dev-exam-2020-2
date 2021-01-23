@@ -29,13 +29,14 @@ def read(movie_id):
     ncur = []
     cur = None
     for review in movie.reviews:
-        if current_user.is_authenticated:
-            if current_user.id != review.user_id:
-                ncur.append(review)
+        if review.is_moderated:
+            if current_user.is_authenticated:
+                if current_user.id != review.user_id:
+                    ncur.append(review)
+                else:
+                    cur = review
             else:
-                cur = review
-        else:
-            ncur = movie.reviews
+                ncur = movie.reviews
 
     return render_template('crud/read_film.html', movie=movie, ncur=ncur, cur=cur)
 
@@ -129,17 +130,27 @@ def update_q():
     movie.duration = request.form.get('duration')
     movie.description = description
     
+    
+    print(genres)
+    print(movie.genres)
+
+
+    temp_genres = []
+    for i in movie.genres:
+        temp_genres.append(i)
+
+    for genre_id_del in temp_genres:
+        print('remove' + str(genre_id_del))
+        genre_del = Genre.query.filter(Genre.name == genre_id_del.name).first()
+        movie.genres.remove(genre_del)
+
     db.session.add(movie)
 
-    for genre_id in genres:
-        genre = Genre.query.filter(Genre.id == genre_id).first()
-        if genre not in movie.genres:
-            movie.genres.append(genre)
-    
-    for genre_id in movie.genres:
-        if genre_id not in genres:
-            genre = Genre.query.filter(Genre.id == genre_id.id).first()
-            movie.genres.remove(genre)
+    for genre_id_add in genres:
+        print('add' + str(genre_id_add))
+        genre_add = Genre.query.filter(Genre.id == genre_id_add).first()
+        if genre_add not in movie.genres:
+            movie.genres.append(genre_add)
 
     db.session.commit()
 
@@ -148,7 +159,7 @@ def update_q():
     return redirect(url_for('index'))
 
 
-@bp.route('/delete/<int:movie_id>')
+@bp.route('/delete/<int:movie_id>', methods=['POST'])
 @login_required
 @check_rights('delete_movie')
 def delete(movie_id):
