@@ -1,44 +1,50 @@
-{% macro render_text_form(genres) %}
-<form method="POST" action="{{ url_for('crud.new') }}" enctype="multipart/form-data">
+{% macro render_text_form(movie, genres) %}
+<form method="POST" action="{% if movie %}{{ url_for('crud.update_q', movie_id=movie.id) }}{% else %}{{ url_for('crud.new') }}{% endif %}" enctype="multipart/form-data">
     <div class="form-group row">
         <div class="col-md-6 d-flex flex-column">
             <div class="form-group">
                 <label for="name">Название</label>
-                <input class="form-control" type="text" name="name" id="name">
+                <input class="form-control" type="text" name="name" id="name" {% if movie %}value="{{ movie.name }}"{% endif %}>
             </div>
             <div class="form-group">
                 <label for="production_year">Год выхода</label>
-                <input class="form-control" type="text" name="production_year" id="year">
+                <input class="form-control" type="text" name="production_year" id="production_year" {% if movie %}value="{{ movie.production_year }}"{% endif %}>
             </div>
             <div class="form-group">
                 <label for="country">Страна </label>
-                <input class="form-control" type="text" name="country" id="country">
+                <input class="form-control" type="text" name="country" id="country" {% if movie %}value="{{ movie.country }}"{% endif %}>
             </div>
             <div class="form-group">
                 <label for="producer">Режиссёр</label>
-                <input class="form-control" type="text" name="producer" id="producer">
+                <input class="form-control" type="text" name="producer" id="producer" {% if movie %}value="{{ movie.producer }}"{% endif %}>
             </div>
             <div class="form-group">
                 <label for="screenwriter">Сценарист</label>
-                <input class="form-control" type="text" name="screenwriter" id="screenwriter">
+                <input class="form-control" type="text" name="screenwriter" id="screenwriter" {% if movie %}value="{{ movie.screenwriter }}"{% endif %}>
             </div>
             <div class="form-group">
                 <label for="actors">Актёры</label>
-                <input class="form-control" type="text" name="actors" id="actors">
+                <input class="form-control" type="text" name="actors" id="actors" {% if movie %}value="{{ movie.actors }}"{% endif %}>
             </div>
             <div class="form-group">
                 <label for="duration">Продолжительность (в минутах)</label>
-                <input class="form-control" type="text" name="duration" id="duration">
+                <input class="form-control" type="text" name="duration" id="duration" {% if movie %}value="{{ movie.duration }}"{% endif %}>
             </div>
             <div class="form-group">
                 <label for="genre_ids">Жанры</label>
                 <select class="form-control" multiple id="genre_ids" name="genre_ids">
                     {% for genre in genres %}
-                    <option value="{{ genre }}">{{ genre.name }}</option>
+                    <option value="{{ genre.id }}" {% if genre in movie.genres %}selected{% endif %}>{{ genre.name }}</option>
                     {% endfor %}
                 </select>
             </div>
         </div>
+        {% if movie %}
+        <div class="col-md-1 d-flex flex-column"></div>
+        <div class="col-md-4 d-flex flex-column">
+            <img src="{{ movie.poster.url }}" class="pt-4 img-fluid h-100" alt="">
+        </div>
+        {% else %}
         <div class="col-md-6 d-flex flex-column">
             <div class="form-group">
                 <label for="background_img">Фоновое изображение</label>
@@ -50,11 +56,12 @@
                 <label for="background_img" class="btn btn-dark">Выбрать изображение</label>
             </div>
         </div>
+        {% endif %}
     </div>
 
     <div class="form-group">
         <label for="text-content">Введите описание в формате Markdown</label>
-        <textarea class="form-control" name="description" id="text-content" cols="30" rows="10"></textarea>
+        <textarea class="form-control" name="description" id="text-content" cols="30" rows="10"> {% if movie %}{{ movie.description }}{% endif %}</textarea>
     </div>
 
     <div class="form-group text-center">

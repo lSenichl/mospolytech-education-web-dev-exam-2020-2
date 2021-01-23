@@ -30,11 +30,11 @@
                     {% if current_user.is_authenticated and (current_user.role.name == 'Администратор' or
                     current_user.role.name == 'Модератор') %}
                     <a href="{{ url_for('crud.update', movie_id=movie.id) }}" type="button"
-                        class="btn btn-success">Редактирование</a>
+                        class="btn btn-success">Обновить</a>
                     {% endif %}
                     {% if current_user.is_authenticated and current_user.role.name == 'Администратор' %}
                     <a href="{{ url_for('crud.delete', movie_id=movie.id) }}" type="button"
-                        class="btn btn-danger">Удаление</a>
+                        class="btn btn-danger">Удалить</a>
                     {% endif %}
                 </div>
             </div>

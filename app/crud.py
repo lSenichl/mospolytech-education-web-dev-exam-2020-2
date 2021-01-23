@@ -79,13 +79,10 @@ def new():
 
     description = bleach.clean(request.form.get('description'))
     genres = request.form.getlist('genre_ids')
-    print(genres)
-
-    
 
     movie = Movie(**params(), poster_id=img.id, description=description)
+    
     db.session.add(movie)
-    db.session.commit()
 
     for genre_id in genres:
         genre = Genre.query.filter(Genre.id == genre_id).first()
@@ -93,6 +90,8 @@ def new():
 
     if img:
         img_saver.bind_to_object(movie)
+    
+    db.session.commit()
 
     flash(f'Фильм {movie.name} был успешно добавлен!', 'success')
 
@@ -103,9 +102,49 @@ def new():
 @login_required
 @check_rights('update_movie')
 def update(movie_id):
+    movie = Movie.query.get(movie_id)
+    genres = Genre.query.all()
+
+    return render_template('crud/update_film.html', movie=movie, genres=genres)
 
 
-    return render_template('crud/update_film.html', movie_id=movie_id)
+@bp.route('/update', methods=['POST'])
+@login_required
+@check_rights('update_movie')
+def update_q():
+    movie_id = request.args.get('movie_id')
+
+    movie = Movie.query.filter(Movie.id == movie_id).first()
+
+    description = bleach.clean(request.form.get('description'))
+    genres = request.form.getlist('genre_ids')
+
+    movie.name = request.form.get('name')
+    movie.production_year = request.form.get('production_year')
+    movie.country = request.form.get('country')
+    movie.producer = request.form.get('producer')
+    movie.screenwriter = request.form.get('screenwriter')
+    movie.actors = request.form.get('actors')
+    movie.duration = request.form.get('duration')
+    movie.description = description
+    
+    db.session.add(movie)
+
+    for genre_id in genres:
+        if genre_id not in movie.genres:
+            genre = Genre.query.filter(Genre.id == genre_id).first()
+            movie.genres.append(genre)
+    
+    for genre_id in movie.genres:
+        if genre_id not in genres:
+            genre = Genre.query.filter(Genre.id == genre_id.id).first()
+            movie.genres.remove(genre)
+
+    db.session.commit()
+
+    flash(f'Фильм {movie.name} был успешно обновлён!', 'success')
+
+    return redirect(url_for('index'))
 
 
 @bp.route('/delete/<int:movie_id>')
