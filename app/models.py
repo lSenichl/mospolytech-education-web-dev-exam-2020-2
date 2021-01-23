@@ -69,6 +69,8 @@ class Poster(db.Model):
     mime_type = db.Column(db.String(128), nullable=False)
     md5_hash = db.Column(db.String(128), nullable=False, unique=True)
 
+    movie = db.relationship('Movie', backref=db.backref('poster_img', cascade='all, delete'))
+
     def __repr__(self):
         return '<Genre %r>' % self.name
 

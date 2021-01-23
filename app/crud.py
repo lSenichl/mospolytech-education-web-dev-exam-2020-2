@@ -5,6 +5,7 @@ from flask_login import login_required, current_user
 from tools import ImageSaver
 from models import Movie, Review, User, Genre
 from auth import check_rights
+from config import UPLOAD_FOLDER
 
 from app import db
 
@@ -131,8 +132,8 @@ def update_q():
     db.session.add(movie)
 
     for genre_id in genres:
-        if genre_id not in movie.genres:
-            genre = Genre.query.filter(Genre.id == genre_id).first()
+        genre = Genre.query.filter(Genre.id == genre_id).first()
+        if genre not in movie.genres:
             movie.genres.append(genre)
     
     for genre_id in movie.genres:
@@ -152,6 +153,8 @@ def update_q():
 @check_rights('delete_movie')
 def delete(movie_id):
     movie = Movie.query.get(movie_id)
+
+    os.remove(UPLOAD_FOLDER + '/' + str(movie.poster.storage_filename))
 
     db.session.delete(movie)
     db.session.commit()
