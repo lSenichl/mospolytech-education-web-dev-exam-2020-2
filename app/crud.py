@@ -1,9 +1,9 @@
 import os
 import bleach
-from flask import Blueprint, render_template, redirect, url_for, request, current_app, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from tools import ImageSaver
-from models import Movie, Review, User, Genre
+from models import Movie, Review, Genre
 from auth import check_rights
 from config import UPLOAD_FOLDER
 
@@ -11,16 +11,20 @@ from app import db
 
 bp = Blueprint('crud', __name__, url_prefix='/crud')
 
-PERMITTED_PARAMS = ['name', 'production_year', 'country', 'producer', 'screenwriter', 'actors', 'duration']
+PERMITTED_PARAMS = ['name', 'production_year', 'country',
+                    'producer', 'screenwriter', 'actors', 'duration']
 PERMITTED_REVIEW_PARAMS = ['user_id', 'movie_id', 'text', 'rating']
 
 PER_PAGE = 5
 
+
 def params():
-    return { p: request.form.get(p) for p in PERMITTED_PARAMS }
+    return {p: request.form.get(p) for p in PERMITTED_PARAMS}
+
 
 def review_params():
-    return { p: request.form.get(p) for p in PERMITTED_REVIEW_PARAMS }
+    return {p: request.form.get(p) for p in PERMITTED_REVIEW_PARAMS}
+
 
 @bp.route('/read/<int:movie_id>')
 def read(movie_id):
@@ -35,11 +39,13 @@ def read(movie_id):
                 cur = review
                 print(cur.is_moderated)
             else:
-                ncur.append(review)
+                if review.is_moderated == 'Одобрено':
+                    ncur.append(review)
     else:
         ncur = movie.reviews
 
     return render_template('crud/read_film.html', movie=movie, ncur=ncur, cur=cur)
+
 
 @bp.route('/read/<int:movie_id>/create_review', methods=['POST', 'GET'])
 @login_required
@@ -61,12 +67,13 @@ def create_review(movie_id):
 
     return render_template('crud/create_review.html', movie_id=movie_id)
 
+
 @bp.route('/create')
 @login_required
 @check_rights('create_movie')
 def create():
     genres = Genre.query.all()
-    
+
     return render_template('crud/create_film.html', genres=genres)
 
 
@@ -74,7 +81,7 @@ def create():
 @login_required
 @check_rights('create_movie')
 def new():
-    f = request.files.get('background_img') 
+    f = request.files.get('background_img')
     img = None
     if f and f.filename:
         img_saver = ImageSaver(f)
@@ -84,7 +91,7 @@ def new():
     genres = request.form.getlist('genre_ids')
 
     movie = Movie(**params(), poster_id=img.id, description=description)
-    
+
     db.session.add(movie)
 
     for genre_id in genres:
@@ -93,7 +100,7 @@ def new():
 
     if img:
         img_saver.bind_to_object(movie)
-    
+
     db.session.commit()
 
     flash(f'Фильм {movie.name} был успешно добавлен!', 'success')
@@ -130,11 +137,9 @@ def update_q():
     movie.actors = request.form.get('actors')
     movie.duration = request.form.get('duration')
     movie.description = description
-    
-    
+
     print(genres)
     print(movie.genres)
-
 
     temp_genres = []
     for i in movie.genres:

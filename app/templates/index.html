@@ -22,7 +22,7 @@
                                 {% endfor %}
                             </p>
                             <p class="card-text"><small class="text-muted">{{ movie.production_year }} год</small></p>
-                            <p class="card-text"><small class="text-muted">Количество рецензий: {{movie.reviews|list|string|replace("[<Review '", '')|replace("'>]", ' ')|replace('На рассмотрении', '')|replace('Отклонено', '')|wordcount}}</small></p>
+                            <p class="card-text"><small class="text-muted">Количество рецензий: {{movie.reviews|list|string|replace("[<Review '", '')|replace("<Review '", '')|replace('На рассмотрении', '')|replace('Отклонено', '')|replace("'>", '')|replace("'>]", '')|wordcount}}</small></p>
                         </div>
                     </div>
                     

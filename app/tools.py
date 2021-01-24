@@ -1,11 +1,12 @@
 import os
 from uuid import uuid4
-from flask import url_for, current_app
+from flask import current_app
 import hashlib
 from werkzeug.utils import secure_filename
 from models import Poster
 
 from app import db
+
 
 class ImageSaver:
     def __init__(self, file):
@@ -17,12 +18,13 @@ class ImageSaver:
             return self.img
         file_name = secure_filename(self.file.filename)
         self.img = Poster(
-            id=str(uuid4()), 
-            file_name=file_name, 
-            mime_type=self.file.mimetype, 
+            id=str(uuid4()),
+            file_name=file_name,
+            mime_type=self.file.mimetype,
             md5_hash=self.md5_hash
         )
-        self.file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], self.img.storage_filename))
+        self.file.save(os.path.join(
+            current_app.config['UPLOAD_FOLDER'], self.img.storage_filename))
         db.session.add(self.img)
         db.session.commit()
         return self.img

@@ -19,9 +19,10 @@ class Genre(db.Model):
         return '<Genre %r>' % self.name
 
 
-genres = db.Table('exam_mtm_genre_movie', 
-                            db.Column('movie_id', db.Integer, db.ForeignKey('exam_movies.id'), primary_key=True),
-                            db.Column('genre_id', db.Integer, db.ForeignKey('exam_genres.id'), primary_key=True))
+genres = db.Table('exam_mtm_genre_movie',
+                  db.Column('movie_id', db.Integer, db.ForeignKey(
+                      'exam_movies.id'), primary_key=True),
+                  db.Column('genre_id', db.Integer, db.ForeignKey('exam_genres.id'), primary_key=True))
 
 
 class Movie(db.Model):
@@ -40,10 +41,13 @@ class Movie(db.Model):
     rating_sum = db.Column(db.Integer, default=0)
     rating_num = db.Column(db.Integer, default=0)
 
-    poster_id = db.Column(db.String(36), db.ForeignKey('exam_posters.id'), nullable=False)
+    poster_id = db.Column(db.String(36), db.ForeignKey(
+        'exam_posters.id'), nullable=False)
 
-    poster = db.relationship('Poster', backref=db.backref('movies', cascade='all, delete'))
-    genres = db.relationship('Genre', secondary=genres, backref=db.backref('movies', lazy='dynamic', cascade='all, delete'))
+    poster = db.relationship('Poster', backref=db.backref(
+        'movies', cascade='all, delete'))
+    genres = db.relationship('Genre', secondary=genres, backref=db.backref(
+        'movies', lazy='dynamic', cascade='all, delete'))
     reviews = db.relationship('Review', cascade="all, delete", backref='movie')
 
     def __repr__(self):
@@ -69,7 +73,8 @@ class Poster(db.Model):
     mime_type = db.Column(db.String(128), nullable=False)
     md5_hash = db.Column(db.String(128), nullable=False, unique=True)
 
-    movie = db.relationship('Movie', backref=db.backref('poster_img', cascade='all, delete'))
+    movie = db.relationship('Movie', backref=db.backref(
+        'poster_img', cascade='all, delete'))
 
     def __repr__(self):
         return '<Genre %r>' % self.name
@@ -89,13 +94,17 @@ class Review(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    movie_id = db.Column(db.Integer, db.ForeignKey('exam_movies.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('exam_users.id'), nullable=False)
-    is_moderated = db.Column(db.String(128), db.ForeignKey('exam_statuses.name'), nullable=False, default='На рассмотрении')
+    movie_id = db.Column(db.Integer, db.ForeignKey(
+        'exam_movies.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'exam_users.id'), nullable=False)
+    is_moderated = db.Column(db.String(128), db.ForeignKey(
+        'exam_statuses.name'), nullable=False, default='На рассмотрении')
 
     rating = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text(), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, server_default=sa.sql.func.now())
+    created_at = db.Column(db.DateTime, nullable=False,
+                           server_default=sa.sql.func.now())
 
     user = db.relationship('User', backref='reviews')
 

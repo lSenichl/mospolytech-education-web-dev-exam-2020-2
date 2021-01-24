@@ -1,5 +1,4 @@
-import os
-from flask import Flask, render_template, abort, send_from_directory, Blueprint, render_template, redirect, url_for, request, current_app, flash
+from flask import Flask, render_template, abort, send_from_directory, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from flask_migrate import Migrate
@@ -22,12 +21,14 @@ naming_convention = {
 db = SQLAlchemy(app, metadata=MetaData(naming_convention=naming_convention))
 migrate = Migrate(app, db)
 
+
 from models import Movie, Poster
 
-from auth import bp as auth_bp, init_login_manager, check_rights
+from auth import bp as auth_bp, init_login_manager
 from crud import bp as crud_bp
 from api import bp as api_bp
 from reviews import bp as reviews_bp
+
 
 init_login_manager(app)
 
@@ -36,12 +37,14 @@ app.register_blueprint(crud_bp)
 app.register_blueprint(api_bp)
 app.register_blueprint(reviews_bp)
 
+
 @app.route('/')
 def index():
     page = request.args.get('page', 1, type=int)
-    pagination = Movie.query.order_by(Movie.production_year.desc()).paginate(page, PER_PAGE)
+    pagination = Movie.query.order_by(
+        Movie.production_year.desc()).paginate(page, PER_PAGE)
     movies = pagination.items
-    
+
     return render_template('index.html', pagination=pagination, movies=movies)
 
 
