@@ -24,3 +24,6 @@ class UsersPolicy:
 
     def delete_movie(self):
         return is_admin()
+
+    def moderate_reviews(self):
+        return is_moderator()

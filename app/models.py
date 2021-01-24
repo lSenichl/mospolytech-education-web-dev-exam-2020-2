@@ -44,7 +44,7 @@ class Movie(db.Model):
 
     poster = db.relationship('Poster', backref=db.backref('movies', cascade='all, delete'))
     genres = db.relationship('Genre', secondary=genres, backref=db.backref('movies', lazy='dynamic', cascade='all, delete'))
-    reviews = db.relationship('Review', cascade="all, delete")
+    reviews = db.relationship('Review', cascade="all, delete", backref='movie')
 
     def __repr__(self):
         return '<Movie %r>' % self.name
@@ -91,17 +91,16 @@ class Review(db.Model):
 
     movie_id = db.Column(db.Integer, db.ForeignKey('exam_movies.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('exam_users.id'), nullable=False)
-    is_moderated = db.Column(db.Boolean, unique=False, default=True)
+    is_moderated = db.Column(db.String(128), db.ForeignKey('exam_statuses.name'), nullable=False, default='На рассмотрении')
 
     rating = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text(), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=sa.sql.func.now())
 
-    
     user = db.relationship('User', backref='reviews')
 
     def __repr__(self):
-        return '<Review %r>' % self.name
+        return '<Review %r>' % self.is_moderated
 
     @property
     def html(self):
@@ -152,3 +151,9 @@ class Role(db.Model):
 
     def __repr__(self):
         return '<Role %r>' % self.name
+
+
+class Status(db.Model):
+    __tablename__ = 'exam_statuses'
+
+    name = db.Column(db.String(128), primary_key=True)

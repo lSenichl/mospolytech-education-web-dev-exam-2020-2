@@ -28,15 +28,16 @@ def read(movie_id):
 
     ncur = []
     cur = None
-    for review in movie.reviews:
-        if review.is_moderated:
-            if current_user.is_authenticated:
-                if current_user.id != review.user_id:
-                    ncur.append(review)
-                else:
-                    cur = review
+
+    if current_user.is_authenticated:
+        for review in movie.reviews:
+            if current_user.id == review.user_id:
+                cur = review
+                print(cur.is_moderated)
             else:
-                ncur = movie.reviews
+                ncur.append(review)
+    else:
+        ncur = movie.reviews
 
     return render_template('crud/read_film.html', movie=movie, ncur=ncur, cur=cur)
 
@@ -50,8 +51,8 @@ def create_review(movie_id):
         review.text = bleach.clean(request.form.get('text'))
         db.session.add(review)
         db.session.commit()
-        movie.rating_num = movie.rating_num+1
-        movie.rating_sum = movie.rating_sum+int(request.form.get('rating'))
+        #movie.rating_num = movie.rating_num+1
+        #movie.rating_sum = movie.rating_sum+int(request.form.get('rating'))
         db.session.add(movie)
         db.session.commit()
         flash("Рецензия успешно оставлена", "success")

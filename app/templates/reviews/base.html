@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1 class="my-5 text-center">Модерация рецензий</h1>
+
+    <div class="card text-center w-75 mx-auto">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'reviews.not_moderated' %}active{% endif %}" href="{{ url_for('reviews.not_moderated') }}">На рассмотрении</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'reviews.confirmed' %}active{% endif %}" href="{{ url_for('reviews.confirmed') }}">Одобрено</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'reviews.canceled' %}active{% endif %}" href="{{ url_for('reviews.canceled') }}">Отклонено</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body pb-1">
+            {% block tab_content %}
+            {% endblock %}
+        </div>
+    </div>
+
+{% endblock %}
