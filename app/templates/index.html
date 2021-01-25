@@ -53,7 +53,7 @@
         </div>
         {% endif %}
         {% if current_user.is_authenticated and current_user.role.name == 'Администратор' %}
-        <a href="{{ url_for('crud.create') }}" type="button" class="btn btn-dark w-100 mb-5">Добавить фильм</a>
+        <a href="{{ url_for('crud.create') }}" type="button" class="btn btn-dark w-100 mb-5">Добавить фильм{{ movie }}</a>
         {% endif %}
     </div>
 </div>

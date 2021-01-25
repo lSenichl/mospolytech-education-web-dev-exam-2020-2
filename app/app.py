@@ -2,6 +2,7 @@ from flask import Flask, render_template, abort, send_from_directory, render_tem
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from flask_migrate import Migrate
+from sqlalchemy import exc
 
 PER_PAGE = 4
 
@@ -26,7 +27,6 @@ from models import Movie, Poster
 
 from auth import bp as auth_bp, init_login_manager
 from crud import bp as crud_bp
-from api import bp as api_bp
 from reviews import bp as reviews_bp
 
 
@@ -34,7 +34,6 @@ init_login_manager(app)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(crud_bp)
-app.register_blueprint(api_bp)
 app.register_blueprint(reviews_bp)
 
 

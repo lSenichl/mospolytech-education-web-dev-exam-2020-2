@@ -4,6 +4,7 @@ from flask import current_app
 import hashlib
 from werkzeug.utils import secure_filename
 from models import Poster
+from sqlalchemy import exc
 
 from app import db
 

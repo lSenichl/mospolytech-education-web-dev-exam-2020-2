@@ -7,6 +7,7 @@ import markdown
 from app import db
 from sqlalchemy.dialects import mysql
 from users_policy import UsersPolicy
+from sqlalchemy import exc
 
 
 class Genre(db.Model):
@@ -20,9 +21,9 @@ class Genre(db.Model):
 
 
 genres = db.Table('exam_mtm_genre_movie',
-                  db.Column('movie_id', db.Integer, db.ForeignKey(
-                      'exam_movies.id'), primary_key=True),
-                  db.Column('genre_id', db.Integer, db.ForeignKey('exam_genres.id'), primary_key=True))
+                    db.Column('movie_id', db.Integer, db.ForeignKey(
+                    'exam_movies.id'), primary_key=True),
+                    db.Column('genre_id', db.Integer, db.ForeignKey('exam_genres.id'), primary_key=True))
 
 
 class Movie(db.Model):
@@ -103,8 +104,7 @@ class Review(db.Model):
 
     rating = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text(), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False,
-                           server_default=sa.sql.func.now())
+    created_at = db.Column(db.DateTime, nullable=False, server_default=sa.sql.func.now())
 
     user = db.relationship('User', backref='reviews')
 

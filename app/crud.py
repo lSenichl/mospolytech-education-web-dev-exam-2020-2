@@ -89,22 +89,32 @@ def new():
     description = bleach.clean(request.form.get('description'))
     genres = request.form.getlist('genre_ids')
 
-    movie = Movie(**params(), poster_id=img.id, description=description)
+    movie = Movie(**params(), description=description)
 
-    db.session.add(movie)
+    try:
+        movie = Movie(**params(), poster_id=img.id, description=description)
+        if img:
+            img_saver.bind_to_object(movie)
+    except:
+        db.session.rollback()
+        flash(f'Ошибка создания фильма! Извините, внесите данные снова :(', 'danger')
+        return redirect(url_for('crud.create'))
 
-    for genre_id in genres:
-        genre = Genre.query.filter(Genre.id == genre_id).first()
-        movie.genres.append(genre)
+    try:
+        db.session.add(movie)
 
-    if img:
-        img_saver.bind_to_object(movie)
+        for genre_id in genres:
+            genre = Genre.query.filter(Genre.id == genre_id).first()
+            movie.genres.append(genre)
 
-    db.session.commit()
+        db.session.commit()
+    except exc.DBAPIError or exc.SQLAlchemyError or exc.DatabaseError: 
+        flash(f'Ошибка создания фильма! Извините, внесите данные снова :(', 'danger')
+        return redirect(url_for('crud.create'))
 
     flash(f'Фильм {movie.name} был успешно добавлен!', 'success')
 
-    return redirect(url_for('index'))
+    return redirect(url_for('crud.read', movie_id=movie.id))
 
 
 @bp.route('/update/<int:movie_id>')
@@ -137,9 +147,6 @@ def update_q():
     movie.duration = request.form.get('duration')
     movie.description = description
 
-    print(genres)
-    print(movie.genres)
-
     temp_genres = []
     for i in movie.genres:
         temp_genres.append(i)
@@ -149,19 +156,26 @@ def update_q():
         genre_del = Genre.query.filter(Genre.name == genre_id_del.name).first()
         movie.genres.remove(genre_del)
 
-    db.session.add(movie)
+    try:
+        db.session.add(movie)
+    except exc.DBAPIError or exc.SQLAlchemyError or exc.DatabaseError: 
+        flash(f'Ошибка обновления фильма! Извините, внесите данные снова :(', 'danger')
+        return redirect(url_for('crud.update', movie_id=movie.id))
 
     for genre_id_add in genres:
-        print('add' + str(genre_id_add))
         genre_add = Genre.query.filter(Genre.id == genre_id_add).first()
         if genre_add not in movie.genres:
             movie.genres.append(genre_add)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except exc.DBAPIError or exc.SQLAlchemyError or exc.DatabaseError: 
+        flash(f'Ошибка обновления фильма! Извините, внесите данные снова :(', 'danger')
+        return redirect(url_for('crud.update', movie_id=movie.id))
 
     flash(f'Фильм {movie.name} был успешно обновлён!', 'success')
 
-    return redirect(url_for('index'))
+    return redirect(url_for('crud.read', movie_id=movie.id))
 
 
 @bp.route('/delete/<int:movie_id>', methods=['POST'])
