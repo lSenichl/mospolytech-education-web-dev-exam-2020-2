@@ -76,8 +76,10 @@ def confirm_cancel():
 
     review = Review.query.filter(Review.id == review_id).first()
 
-    if confirm == True:
+    if confirm == 'true':
         review.is_moderated = 'Одобрено'
+        review.movie.rating_num = review.movie.rating_num+1
+        review.movie.rating_sum = review.movie.rating_sum+int(review.rating)
         print(review.is_moderated)
         flash("Рецензия успешно одобрена", "success")
     else:

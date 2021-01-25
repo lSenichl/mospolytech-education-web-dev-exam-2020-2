@@ -6,6 +6,7 @@ from tools import ImageSaver
 from models import Movie, Review, Genre
 from auth import check_rights
 from config import UPLOAD_FOLDER
+from sqlalchemy import exc
 
 from app import db
 
@@ -57,8 +58,6 @@ def create_review(movie_id):
         review.text = bleach.clean(request.form.get('text'))
         db.session.add(review)
         db.session.commit()
-        #movie.rating_num = movie.rating_num+1
-        #movie.rating_sum = movie.rating_sum+int(request.form.get('rating'))
         db.session.add(movie)
         db.session.commit()
         flash("Рецензия успешно оставлена", "success")
