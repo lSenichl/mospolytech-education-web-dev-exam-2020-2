@@ -16,7 +16,7 @@ class ImageSaver:
     def save(self):
         self.img = self.__find_by_md5_hash()
         if self.img is not None:
-            return self.img
+            return None
         file_name = secure_filename(self.file.filename)
         self.img = Poster(
             id=str(uuid4()),

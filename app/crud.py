@@ -86,6 +86,10 @@ def new():
         img_saver = ImageSaver(f)
         img = img_saver.save()
 
+    if img == None:
+        flash(f'Ошибка создания фильма! Нельзя добавить один постер к двум фильмам!', 'danger')
+        return redirect(url_for('crud.create'))
+
     description = bleach.clean(request.form.get('description'))
     genres = request.form.getlist('genre_ids')
 
@@ -184,7 +188,7 @@ def update_q():
 def delete(movie_id):
     movie = Movie.query.get(movie_id)
 
-    os.remove(UPLOAD_FOLDER + '/' + str(movie.poster.storage_filename))
+    os.remove(app.config['UPLOAD_FOLDER'] + '/' + str(movie.poster.storage_filename))
 
     db.session.delete(movie)
     db.session.commit()
