@@ -54,6 +54,10 @@ def create_review(movie_id):
     movie = Movie.query.get(movie_id)
 
     if request.method == "POST":
+        if Review.query.filter(Review.user_id == current_user.id).filter(Review.movie_id == movie_id).first():
+            flash("Вы уже оставляли рецензию!", "danger")
+            return redirect(url_for('crud.read', movie_id=movie_id))
+
         review = Review(**review_params())
         review.text = bleach.clean(request.form.get('text'))
         db.session.add(review)
